@@ -10,7 +10,7 @@ export default function(props) {
     <section>
       <BookItem
         bookCover={props.data.book.localImage.childImageSharp.fixed}
-        authorName={props.data.book.author.name}
+        // authorName={props.data.book.author.name}
         bookSummary={props.data.book.summary}
         bookTitle={props.data.book.title}
       />

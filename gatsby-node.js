@@ -23,7 +23,7 @@ exports.createPages = ({ graphql, actions }) => {
     if (result.errors) {
       throw result.errors
     }
-    return result.data.allBook.edges.forEach(book => {
+    result.data.allBook.edges.forEach(book => {
       createPage({
         path: `/book/${book.node.id}`,
         component: bookTemplate,

@@ -29,7 +29,7 @@ export default function(props) {
           bookCover={edge.node.localImage.childImageSharp.fixed}
           bookTitle={edge.node.title}
           bookSummary={edge.node.summary}
-          authorName={edge.node.author.name}
+          // authorName={edge.node.author.name}
         >
           <LinkButton>
             <Link to={`/book/${edge.node.id}`}>Join conversation</Link>

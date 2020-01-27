@@ -1,7 +1,9 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import { navigate } from "gatsby"
 import { Form, Input, Button, ErrorMessage } from "../components/common/"
 import { FirebaseContext } from "../components/Firebase"
+
+let isMounted
 
 export default function() {
   const { firebase } = useContext(FirebaseContext)
@@ -12,6 +14,13 @@ export default function() {
     confirmPassword: "",
   })
   const [errorMessage, setErrorMessage] = useState("")
+
+  useEffect(function() {
+    isMounted = true
+    return function() {
+      isMounted = false
+    }
+  }, [])
 
   function handleInputChange(event) {
     event.persist()
@@ -32,7 +41,11 @@ export default function() {
           password: formValues.password,
         })
         .then(() => navigate("/"))
-        .catch(error => setErrorMessage(error.message))
+        .catch(function(error) {
+          if (isMounted) {
+            setErrorMessage(error.message)
+          }
+        })
     } else {
       setErrorMessage("Password and Confirm Password fields must match")
     }

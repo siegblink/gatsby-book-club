@@ -10,6 +10,7 @@ let fileReader
 if (typeof window !== "undefined") {
   fileReader = new FileReader()
 }
+let isMounted
 
 export default function Addbook() {
   const { firebase } = useContext(FirebaseContext)
@@ -19,6 +20,13 @@ export default function Addbook() {
   const [authorId, setAuthorId] = useState("")
   const [summary, setSummary] = useState("")
   const [success, setSuccess] = useState(false)
+
+  useEffect(function() {
+    isMounted = true
+    return function() {
+      isMounted = false
+    }
+  }, [])
 
   useEffect(function() {
     fileReader.addEventListener("load", function() {
@@ -31,15 +39,17 @@ export default function Addbook() {
       // Query all available authors
       if (firebase) {
         firebase.getAuthors().then(function(snapshot) {
-          const availableAuthors = []
-          snapshot.forEach(function(doc) {
-            availableAuthors.push({
-              id: doc.id,
-              ...doc.data(),
+          if (isMounted) {
+            const availableAuthors = []
+            snapshot.forEach(function(doc) {
+              availableAuthors.push({
+                id: doc.id,
+                ...doc.data(),
+              })
             })
-          })
-          setAuthorId(availableAuthors[0].id)
-          setAuthors(availableAuthors)
+            setAuthorId(availableAuthors[0].id)
+            setAuthors(availableAuthors)
+          }
         })
       }
     },
@@ -66,7 +76,9 @@ export default function Addbook() {
     firebase
       .createBook({ bookCover, bookName, authorId, summary })
       .then(function() {
-        setSuccess(true)
+        if (isMounted) {
+          setSuccess(true)
+        }
       })
   }
 
