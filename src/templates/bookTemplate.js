@@ -1,0 +1,42 @@
+import React, { useContext } from "react"
+import { graphql } from "gatsby"
+import BookItem from "../components/BookItem"
+import { BookComments } from "../components/common"
+import { FirebaseContext } from "../components/Firebase"
+
+export default function(props) {
+  const { firebase } = useContext(FirebaseContext)
+  return (
+    <section>
+      <BookItem
+        bookCover={props.data.book.localImage.childImageSharp.fixed}
+        authorName={props.data.book.author.name}
+        bookSummary={props.data.book.summary}
+        bookTitle={props.data.book.title}
+      />
+      {!!firebase && (
+        <BookComments firebase={firebase} bookId={props.data.book.id} />
+      )}
+    </section>
+  )
+}
+
+export const query = graphql`
+  query BookQuery($bookId: String!) {
+    book(id: { eq: $bookId }) {
+      summary
+      title
+      localImage {
+        childImageSharp {
+          fixed(width: 150) {
+            ...GatsbyImageSharpFixed
+          }
+        }
+      }
+      id
+      author {
+        name
+      }
+    }
+  }
+`

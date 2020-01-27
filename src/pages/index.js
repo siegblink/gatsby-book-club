@@ -1,21 +1,65 @@
 import React from "react"
-import { Link } from "gatsby"
+import { Link, graphql } from "gatsby"
+import styled from "styled-components"
+import BookItem from "../components/BookItem"
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
+const LinkButton = styled.div`
+  text-align: right;
+  margin-bottom: 8px;
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link>
-  </Layout>
-)
+  a {
+    padding: 8px;
+    background: rebeccapurple;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
 
-export default IndexPage
+    &:hover {
+      background: indigo;
+    }
+  }
+`
+
+export default function(props) {
+  return (
+    <section>
+      {props.data.allBook.edges.map(edge => (
+        <BookItem
+          key={edge.node.id}
+          bookCover={edge.node.localImage.childImageSharp.fixed}
+          bookTitle={edge.node.title}
+          bookSummary={edge.node.summary}
+          authorName={edge.node.author.name}
+        >
+          <LinkButton>
+            <Link to={`/book/${edge.node.id}`}>Join conversation</Link>
+          </LinkButton>
+        </BookItem>
+      ))}
+    </section>
+  )
+}
+
+export const query = graphql`
+  {
+    allBook {
+      edges {
+        node {
+          summary
+          title
+          localImage {
+            childImageSharp {
+              fixed(width: 150) {
+                ...GatsbyImageSharpFixed
+              }
+            }
+          }
+          id
+          author {
+            name
+          }
+        }
+      }
+    }
+  }
+`
